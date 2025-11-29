@@ -9,9 +9,15 @@ type ChartCardProps = {
     chartTitle: string,
 }
 
+type ChartPayloadItem = {
+    name: string;
+    value: number;
+    color: string;
+}
+
 interface ChartTooltipProps {
     label: React.ReactNode;
-    payload: Record<string, any>[] | undefined;
+    payload: readonly ChartPayloadItem[] | undefined;
 }
 
 const ChartCard = ({data, dataType, lineColor, chartTitle}: ChartCardProps) => {
@@ -57,7 +63,7 @@ const ChartCard = ({data, dataType, lineColor, chartTitle}: ChartCardProps) => {
         return (
             <Paper px="md" py="sm" withBorder shadow="md" radius="md">
                 <Text fw={500} mb={5}>{label}</Text>
-                {payload.map((item: any) => (
+                {payload.map((item: ChartPayloadItem) => (
                     <Text key={item.name} c={item.color} fz="sm">
                         {`${item.value}${unitStr}`}
                     </Text>
