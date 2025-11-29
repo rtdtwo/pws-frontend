@@ -99,24 +99,24 @@ const Home = () => {
 
             <Grid mt="lg">
                 <GridCol span={{base: 6, sm: 3}}>
-                    <StatCard title="Max Temperature"
+                    <StatCard title="24h Max Temperature"
                               value={`${getMaxWithTimestamp(stationWeather?.data?.past_24h?.temperature)?.value}°C`}
                               icon={<IconTemperaturePlus size={24}/>} color="#ff7979"/>
                 </GridCol>
                 <GridCol span={{base: 6, sm: 3}}>
-                    <StatCard title="Min Temperature"
+                    <StatCard title="24h Temperature"
                               value={`${getMinWithTimestamp(stationWeather?.data?.past_24h?.temperature)?.value}°C`}
                               icon={<IconTemperatureMinus size={24}/>} color="lightblue"/>
                 </GridCol>
                 <GridCol span={{base: 6, sm: 3}}>
-                    <StatCard title="Average Humidity"
+                    <StatCard title="24h Avg Humidity"
                               value={`${getAverage(stationWeather?.data?.past_24h?.humidity)}%`}
                               icon={<IconDroplet size={24}/>} color="#22a6b3"/>
                 </GridCol>
                 <GridCol span={{base: 6, sm: 3}}>
-                    <StatCard title="Average Pressure"
+                    <StatCard title="24h Avg Pressure"
                               value={`--`}
-                              icon={<IconDroplet size={24}/>} color="#22a6b3"/>
+                              icon={<IconGauge size={24}/>} color="#badc58"/>
                 </GridCol>
             </Grid>
 
