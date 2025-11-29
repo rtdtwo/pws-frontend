@@ -21,7 +21,7 @@ export type StationWeatherResponse = {
 }
 
 export const getStationWeather = async (): Promise<StationWeatherResponse | null> => {
-    const uri = "https://pws-backend-1-pgh9y.ondigitalocean.app/api/station/45b83af1-4a0f-46a2-910d-1dd3ccc1031c/weather";
+    const uri = `${process.env.NEXT_PUBLIC_GET_WEATHER_ROUTE}`;
     try {
         const response = await fetch(uri);
         if (response.ok) {
