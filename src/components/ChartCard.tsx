@@ -81,6 +81,7 @@ const ChartCard = ({data, dataType, lineColor, chartTitle}: ChartCardProps) => {
                 h={300}
                 dotProps={{r: 0}}
                 dataKey="dateTime"
+                xAxisLabel="Date & Time (in UTC)"
                 series={[
                     {name: "value", color: lineColor, label: dataType},
                 ]}
