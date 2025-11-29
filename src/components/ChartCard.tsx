@@ -62,7 +62,7 @@ const ChartCard = ({data, dataType, lineColor, chartTitle}: ChartCardProps) => {
 
         return (
             <Paper px="md" py="sm" withBorder shadow="md" radius="md">
-                <Text fw={500} mb={5}>{label}</Text>
+                <Text fw={500} mb={5}>{label} UTC</Text>
                 {payload.map((item: ChartPayloadItem) => (
                     <Text key={item.name} c={item.color} fz="sm">
                         {`${item.value}${unitStr}`}
