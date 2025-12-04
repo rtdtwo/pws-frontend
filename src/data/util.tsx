@@ -29,3 +29,20 @@ export const getAverage = (data: PastWeatherData[] | undefined) => {
         data.map(data => data.value).reduce((s, v) => s + v, 0) / data.length
     );
 }
+
+export const formatEpochToTimezone = (epochTimestamp: number, timeZone: string, locale = 'en-US') => {
+    const date = new Date(epochTimestamp * 1000);
+
+    const options: Intl.DateTimeFormatOptions = {
+        day: '2-digit',
+        month: 'short',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false, // Use 24-hour format (hh:mm)
+        timeZone: timeZone
+    };
+
+    const formatter = new Intl.DateTimeFormat(locale, options);
+    return formatter.format(date);
+}
+

@@ -1,23 +1,34 @@
 'use client'
 
-import {Card, Container, Grid, GridCol, Group, Text, Title} from "@mantine/core";
+import {Card, Container, Grid, GridCol, Group, Switch, Text, Title} from "@mantine/core";
 import {
     IconDroplet,
     IconGauge,
     IconMapPin,
     IconTemperature,
     IconTemperatureMinus,
-    IconTemperaturePlus
+    IconTemperaturePlus,
+    IconWorld
 } from '@tabler/icons-react';
 import {StatCard} from "@/components/StatCard";
 import {useEffect, useState} from "react";
 import {getStationWeather, StationWeatherResponse} from "@/data/network";
 import {getAverage, getMaxWithTimestamp, getMinWithTimestamp} from "@/data/util";
 import ChartCard from "@/components/ChartCard";
+import {MeasurementType, UnitSystem} from "@/data/constants";
+import {useRouter, useSearchParams} from "next/navigation";
+import {applyUnitConversion, getUnit, suffixWithUnit} from "@/data/conversion";
 
 
 const Home = () => {
+    const router = useRouter();
+    const searchParams = useSearchParams();
 
+    const unitSystemParam = searchParams.get('u');
+    const unitSystem = unitSystemParam === UnitSystem.METRIC ? UnitSystem.METRIC : UnitSystem.IMPERIAL;
+    const pressureUnit = getUnit(MeasurementType.PRESSURE, unitSystem);
+
+    const [stationWeather, setStationWeather] = useState<StationWeatherResponse | undefined>(undefined)
 
     const getFormattedDateTime = (epochSeconds: number | undefined) => {
         if (epochSeconds) {
@@ -28,20 +39,17 @@ const Home = () => {
         return "Unknown";
     }
 
-    const [stationWeather, setStationWeather] = useState<StationWeatherResponse | undefined>(undefined)
-
     useEffect(() => {
         getStationWeather().then(response => {
             if (response) {
-                setStationWeather(response)
+                setStationWeather(applyUnitConversion(response, unitSystem))
                 console.log(response)
             }
         }).catch(error => {
             console.log(error);
             setStationWeather(undefined);
         });
-
-    }, [])
+    }, [unitSystem])
 
     return (
         <Container size="md" p="lg">
@@ -54,16 +62,31 @@ const Home = () => {
             </Group>
 
             <Card shadow="sm" pt="sm" radius="md" mt="lg">
-                <Title order={4}>Current Weather</Title>
-                <Text size="xs" c="gray" mt={1}>As
-                    of {getFormattedDateTime(stationWeather?.data?.current?.timestamp)}</Text>
+                <Grid>
+                    <GridCol span="auto">
+                        <Title order={4}>Current Weather</Title>
+                        <Text size="xs" c="gray" mt={1}>As
+                            of {getFormattedDateTime(stationWeather?.data?.current?.timestamp)}</Text>
+                    </GridCol>
+                    <GridCol span="content">
+                        <Switch
+                            onChange={(event) => {
+                                router.push(`?u=${event.target.checked ? UnitSystem.METRIC : UnitSystem.IMPERIAL}`);
+                            }}
+                            size="lg"
+                            defaultChecked={unitSystem === UnitSystem.METRIC.toString()}
+                            onLabel={<IconWorld width={16}/>}
+                            offLabel={<IconWorld color="gray" width={16}/>}/>
+                    </GridCol>
+                </Grid>
                 <Grid mt="md">
                     <GridCol span={{base: 12, sm: 4}}>
                         <Group gap="md" align="flex-start">
                             <IconTemperature size={48} color="#ff7979"/>
                             <div>
                                 <Text size="sm" c="dimmed">Temperature</Text>
-                                <Text size="2rem">{stationWeather?.data?.current?.temperature}°C</Text>
+                                <Text
+                                    size="2rem">{suffixWithUnit(stationWeather?.data?.current?.temperature, MeasurementType.TEMPERATURE, unitSystem)}</Text>
                                 <Text size="xs" c="dimmed" mt="xs">
                                     Feels like: N/A
                                 </Text>
@@ -75,7 +98,8 @@ const Home = () => {
                             <IconDroplet size={48} color="#22a6b3"/>
                             <div>
                                 <Text size="sm" c="dimmed">Humidity</Text>
-                                <Text size="2rem">{stationWeather?.data?.current?.humidity}%</Text>
+                                <Text
+                                    size="2rem">{suffixWithUnit(stationWeather?.data?.current?.humidity, MeasurementType.HUMIDITY, unitSystem)}</Text>
                                 <Text size="xs" c="dimmed" mt="xs">
                                     Relative
                                 </Text>
@@ -89,7 +113,7 @@ const Home = () => {
                                 <Text size="sm" c="dimmed">Pressure</Text>
                                 <Text size="2rem">--</Text>
                                 <Text size="xs" c="dimmed" mt="xs">
-                                    mbar
+                                    {pressureUnit}
                                 </Text>
                             </div>
                         </Group>
@@ -100,17 +124,17 @@ const Home = () => {
             <Grid mt="lg">
                 <GridCol span={{base: 6, sm: 3}}>
                     <StatCard title="24h Max Temperature"
-                              value={`${getMaxWithTimestamp(stationWeather?.data?.past_24h?.temperature)?.value}°C`}
+                              value={`${suffixWithUnit(getMaxWithTimestamp(stationWeather?.data?.past_24h?.temperature)?.value, MeasurementType.TEMPERATURE, unitSystem)}`}
                               icon={<IconTemperaturePlus size={24}/>} color="#ff7979"/>
                 </GridCol>
                 <GridCol span={{base: 6, sm: 3}}>
                     <StatCard title="24h Min Temperature"
-                              value={`${getMinWithTimestamp(stationWeather?.data?.past_24h?.temperature)?.value}°C`}
+                              value={`${suffixWithUnit(getMinWithTimestamp(stationWeather?.data?.past_24h?.temperature)?.value, MeasurementType.TEMPERATURE, unitSystem)}`}
                               icon={<IconTemperatureMinus size={24}/>} color="lightblue"/>
                 </GridCol>
                 <GridCol span={{base: 6, sm: 3}}>
                     <StatCard title="24h Average Humidity"
-                              value={`${getAverage(stationWeather?.data?.past_24h?.humidity)}%`}
+                              value={`${suffixWithUnit(getAverage(stationWeather?.data?.past_24h?.humidity), MeasurementType.HUMIDITY, unitSystem)}`}
                               icon={<IconDroplet size={24}/>} color="#22a6b3"/>
                 </GridCol>
                 <GridCol span={{base: 6, sm: 3}}>
@@ -120,10 +144,17 @@ const Home = () => {
                 </GridCol>
             </Grid>
 
-            <ChartCard data={stationWeather?.data?.past_24h?.temperature} dataType="temperature" lineColor="red"
-                       chartTitle="Temperature (°C)"/>
-            <ChartCard data={stationWeather?.data?.past_24h?.humidity} dataType="humidity" lineColor="cyan"
-                       chartTitle="Relative Humidity (%)"/>
+            <ChartCard data={stationWeather?.data?.past_24h?.temperature}
+                       dataType={MeasurementType.TEMPERATURE}
+                       lineColor="red"
+                       unitSystem={unitSystem}
+                       chartTitle="Temperature"/>
+
+            <ChartCard data={stationWeather?.data?.past_24h?.humidity}
+                       dataType={MeasurementType.HUMIDITY}
+                       lineColor="cyan"
+                       unitSystem={unitSystem}
+                       chartTitle="Relative Humidity"/>
 
         </Container>
     );
