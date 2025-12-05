@@ -3,6 +3,7 @@ import {Geist, Geist_Mono} from "next/font/google";
 import '@mantine/core/styles.css';
 import "./globals.css";
 import {createTheme, MantineProvider} from "@mantine/core";
+import {Suspense} from "react";
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -28,7 +29,9 @@ export default function RootLayout({children,}: Readonly<{ children: React.React
         <html lang="en">
         <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <MantineProvider theme={theme}>
-            {children}
+            <Suspense fallback={null}>
+                {children}
+            </Suspense>
         </MantineProvider>
         </body>
         </html>
