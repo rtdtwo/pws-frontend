@@ -40,6 +40,10 @@ export const applyUnitConversion = (response: StationWeatherResponse | undefined
     return newResponse;
 }
 
-export const suffixWithUnit = (value: number | string | undefined | null, measurementType: MeasurementType, unitSystem: UnitSystem) => (
-    value ? `${value}${getUnit(measurementType, unitSystem)}` : "--"
-)
+export const suffixWithUnit = (value: number | string | undefined | null, measurementType: MeasurementType, unitSystem: UnitSystem) => {
+    if (value !== null && value !== undefined) {
+        return `${value}${getUnit(measurementType, unitSystem)}`;
+    } else {
+        return "--";
+    }
+}
