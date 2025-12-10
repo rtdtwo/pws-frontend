@@ -13,7 +13,7 @@ import {
 import {StatCard} from "@/components/StatCard";
 import {useEffect, useState} from "react";
 import {getStationWeather, StationWeatherResponse} from "@/data/network";
-import {getAverage, getMaxWithTimestamp, getMinWithTimestamp} from "@/data/util";
+import {getAverage, getMaxWithTimestamp, getMinWithTimestamp, roundToOneDecimalPlace} from "@/data/util";
 import LineChartCard from "@/components/LineChartCard";
 import {MeasurementType, UnitSystem} from "@/data/constants";
 import {useRouter, useSearchParams} from "next/navigation";
@@ -135,7 +135,7 @@ const Home = () => {
                 </GridCol>
                 <GridCol span={{base: 6, sm: 3}}>
                     <StatCard title="24h Average Humidity"
-                              value={`${suffixWithUnit(getAverage(stationWeather?.data?.past_24h?.humidity), MeasurementType.HUMIDITY, unitSystem)}`}
+                              value={`${suffixWithUnit(roundToOneDecimalPlace(getAverage(stationWeather?.data?.past_24h?.humidity)!), MeasurementType.HUMIDITY, unitSystem)}`}
                               icon={<IconDroplet size={24}/>} color="#22a6b3"/>
                 </GridCol>
                 <GridCol span={{base: 6, sm: 3}}>
