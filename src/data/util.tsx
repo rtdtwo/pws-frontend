@@ -1,5 +1,13 @@
 import {PastWeatherData} from "@/data/network";
 
+export const roundToOneDecimalPlace = (num: number) => {
+    return Math.round(num * 10) / 10;
+}
+
+export const roundToTwoDecimalPlaces = (num: number) => {
+    return Math.round(num * 100) / 100;
+}
+
 export const getMaxWithTimestamp = (data: PastWeatherData[] | undefined) => {
     if (!Array.isArray(data) || data.length === 0) {
         return null; // or { value: null, timestamp: null }
@@ -25,7 +33,7 @@ export const getAverage = (data: PastWeatherData[] | undefined) => {
         return null; // or { value: null, timestamp: null }
     }
 
-    return Math.round(
+    return roundToTwoDecimalPlaces(
         data.map(data => data.value).reduce((s, v) => s + v, 0) / data.length
     );
 }
@@ -44,5 +52,9 @@ export const formatEpochToTimezone = (epochTimestamp: number, timeZone: string, 
 
     const formatter = new Intl.DateTimeFormat(locale, options);
     return formatter.format(date);
+}
+
+export const formatMonthNumberToMonthName = (monthNumber: number) => {
+    return new Date(Date.UTC(2025, monthNumber, 1)).toLocaleString('default', {month: 'long'});
 }
 

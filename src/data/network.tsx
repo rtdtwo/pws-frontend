@@ -1,12 +1,19 @@
 type CurrentWeatherData = {
     timestamp: number,
     temperature: number,
-    humidity: number
+    humidity: number,
+    pressure: number
 }
 
 export type PastWeatherData = {
     timestamp: number,
     value: number
+}
+
+export type AnnualWeatherData = {
+    month_index: number,
+    max: number,
+    min: number,
 }
 
 export type StationWeatherResponse = {
@@ -15,8 +22,10 @@ export type StationWeatherResponse = {
         current: CurrentWeatherData,
         past_24h: {
             temperature: PastWeatherData[],
-            humidity: PastWeatherData[]
-        }
+            humidity: PastWeatherData[],
+            pressure: PastWeatherData[]
+        },
+        annual_temperatures: AnnualWeatherData[]
     }
 }
 

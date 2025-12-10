@@ -26,7 +26,7 @@ interface ChartTooltipProps {
     payload: readonly ChartPayloadItem[] | undefined;
 }
 
-const ChartCard = ({data, dataType, lineColor, unitSystem, chartTitle}: ChartCardProps) => {
+const LineChartCard = ({data, dataType, lineColor, unitSystem, chartTitle}: ChartCardProps) => {
 
     const unitStr = getUnit(dataType, unitSystem);
 
@@ -81,4 +81,4 @@ const ChartCard = ({data, dataType, lineColor, unitSystem, chartTitle}: ChartCar
     )
 }
 
-export default ChartCard;
+export default LineChartCard;
