@@ -44,6 +44,7 @@ export const applyUnitConversion = (response: StationWeatherResponse | undefined
 
     if (unitSystem === UnitSystem.METRIC) {
         newResponse.data.current.temperature = roundToOneDecimalPlace(response.data.current.temperature);
+        newResponse.data.current.dewpoint = roundToOneDecimalPlace(response.data.current.dewpoint);
         newResponse.data.current.pressure = roundToTwoDecimalPlaces(response.data.current.pressure);
         newResponse.data.past_24h.temperature.forEach(item => item.value = roundToOneDecimalPlace(item.value));
         newResponse.data.past_24h.pressure.forEach(item => item.value = roundToTwoDecimalPlaces(item.value));
@@ -53,6 +54,7 @@ export const applyUnitConversion = (response: StationWeatherResponse | undefined
         });
     } else {
         newResponse.data.current.temperature = convertCelsiusToFahrenheit(response.data.current.temperature);
+        newResponse.data.current.dewpoint = convertCelsiusToFahrenheit(response.data.current.dewpoint);
         newResponse.data.current.pressure = convertMbarToInHg(response.data.current.pressure);
         newResponse.data.past_24h.temperature.forEach(item => item.value = convertCelsiusToFahrenheit(item.value));
         newResponse.data.past_24h.pressure.forEach(item => item.value = convertMbarToInHg(item.value));

@@ -3,7 +3,7 @@
 import {LineChart} from "@mantine/charts";
 import {Card, Paper, Text} from "@mantine/core";
 import {PastWeatherData} from "@/data/network";
-import {formatEpochToTimezone} from "@/data/util";
+import {formatEpochToTimezone, getMaxWithTimestamp, getMinWithTimestamp} from "@/data/util";
 import {MeasurementType, UnitSystem} from "@/data/constants";
 import {getUnit} from "@/data/conversion";
 
@@ -13,6 +13,7 @@ type ChartCardProps = {
     lineColor: string,
     unitSystem: UnitSystem,
     chartTitle: string,
+    yAxisBounds?: number[]
 }
 
 type ChartPayloadItem = {
@@ -26,7 +27,27 @@ interface ChartTooltipProps {
     payload: readonly ChartPayloadItem[] | undefined;
 }
 
-const LineChartCard = ({data, dataType, lineColor, unitSystem, chartTitle}: ChartCardProps) => {
+const LineChartCard = ({data, dataType, lineColor, unitSystem, chartTitle, yAxisBounds}: ChartCardProps) => {
+    if (!yAxisBounds) {
+        switch (dataType) {
+            case MeasurementType.TEMPERATURE:
+                const minTemp = getMinWithTimestamp(data)?.value || -90;
+                const maxTemp = getMaxWithTimestamp(data)?.value || 60;
+                yAxisBounds = [Math.floor(minTemp - 10), Math.ceil(maxTemp + 10)];
+                break;
+            case MeasurementType.HUMIDITY:
+                yAxisBounds = [0, 100];
+                break;
+            case MeasurementType.PRESSURE:
+                const minPressure = getMinWithTimestamp(data)?.value;
+                const maxPressure = getMaxWithTimestamp(data)?.value;
+                if (unitSystem === UnitSystem.METRIC) {
+                    yAxisBounds = [minPressure ? Math.floor(minPressure - 10) : 850, maxPressure? Math.ceil(maxPressure + 10) : 1100];
+                } else {
+                    yAxisBounds = [minPressure ? Math.floor(minPressure - 1): 25, maxPressure ? Math.ceil(maxPressure + 1) : 33];
+                }
+        }
+    }
 
     const unitStr = getUnit(dataType, unitSystem);
 
@@ -58,11 +79,11 @@ const LineChartCard = ({data, dataType, lineColor, unitSystem, chartTitle}: Char
 
     return (
         <Card mt="md" radius="md" shadow="sm">
-            <Text size="md" mb="sm">{chartTitle}</Text>
+            <Text size="md" mb="sm">{chartTitle} ({unitStr})</Text>
             <LineChart
                 data={data ? formatDataArray(data) : []}
                 w="100%"
-                h={300}
+                h={200}
                 xAxisProps={{interval: 180}}
                 dotProps={{r: 0}}
                 dataKey="dateTime"
@@ -72,9 +93,10 @@ const LineChartCard = ({data, dataType, lineColor, unitSystem, chartTitle}: Char
                 tooltipProps={{
                     content: ({label, payload}) => <ChartTooltip label={label} payload={payload}/>,
                 }}
+                yAxisProps={{domain: yAxisBounds}}
                 gridAxis="xy"
                 curveType="natural"
-                valueFormatter={value => `${value}${unitStr}`}
+                valueFormatter={value => `${value}`}
                 connectNulls
             />
         </Card>

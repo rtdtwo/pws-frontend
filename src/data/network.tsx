@@ -2,7 +2,8 @@ type CurrentWeatherData = {
     timestamp: number,
     temperature: number,
     humidity: number,
-    pressure: number
+    pressure: number,
+    dewpoint: number
 }
 
 export type PastWeatherData = {
