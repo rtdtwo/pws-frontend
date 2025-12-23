@@ -42,9 +42,9 @@ const LineChartCard = ({data, dataType, lineColor, unitSystem, chartTitle, yAxis
                 const minPressure = getMinWithTimestamp(data)?.value;
                 const maxPressure = getMaxWithTimestamp(data)?.value;
                 if (unitSystem === UnitSystem.METRIC) {
-                    yAxisBounds = [minPressure ? Math.floor(minPressure - 10) : 850, maxPressure? Math.ceil(maxPressure + 10) : 1100];
+                    yAxisBounds = [minPressure ? Math.floor(minPressure - 10) : 850, maxPressure ? Math.ceil(maxPressure + 10) : 1100];
                 } else {
-                    yAxisBounds = [minPressure ? Math.floor(minPressure - 1): 25, maxPressure ? Math.ceil(maxPressure + 1) : 33];
+                    yAxisBounds = [minPressure ? Math.floor(minPressure - 1) : 25, maxPressure ? Math.ceil(maxPressure + 1) : 33];
                 }
         }
     }

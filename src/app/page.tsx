@@ -89,7 +89,8 @@ const Home = () => {
                                 <Text
                                     size="2rem">{suffixWithUnit(stationWeather?.data?.current?.temperature, MeasurementType.TEMPERATURE, unitSystem)}</Text>
                                 <Text size="xs" c="dimmed" mt="xs">
-                                    Dew Point: {suffixWithUnit(stationWeather?.data?.current?.dewpoint, MeasurementType.TEMPERATURE, unitSystem)}
+                                    Dew
+                                    Point: {suffixWithUnit(stationWeather?.data?.current?.dewpoint, MeasurementType.TEMPERATURE, unitSystem)}
                                 </Text>
                             </div>
                         </Group>
