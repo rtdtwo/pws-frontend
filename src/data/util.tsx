@@ -54,6 +54,42 @@ export const formatEpochToTimezone = (epochTimestamp: number, timeZone: string, 
     return formatter.format(date);
 }
 
+/**
+ * Converts epoch seconds to a formatted string: DD MMM yyyy hh:mm aa
+ * @param epochSeconds - The unix timestamp in seconds
+ * @returns Formatted date string
+ */
+export const formatEpoch = (epochSeconds: number): string => {
+    // Convert seconds to milliseconds
+    const date = new Date(epochSeconds * 1000);
+
+    // Define the formatting options
+    const options: Intl.DateTimeFormatOptions = {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true
+    };
+
+    // Intl.DateTimeFormat handles the localization and parts
+    const formatter = new Intl.DateTimeFormat('en-US', options);
+    const parts = formatter.formatToParts(date);
+
+    // Map the parts to extract values
+    const map = new Map(parts.map(p => [p.type, p.value]));
+
+    const day = map.get('day');
+    const month = map.get('month');
+    const year = map.get('year');
+    const hour = map.get('hour');
+    const minute = map.get('minute');
+    const dayPeriod = map.get('dayPeriod')?.toUpperCase(); // AM/PM
+
+    return `${day} ${month} ${year} ${hour}:${minute} ${dayPeriod}`;
+}
+
 export const formatMonthNumberToMonthName = (monthNumber: number) => {
     return new Date(Date.UTC(2025, monthNumber, 1)).toLocaleString('default', {month: 'long'});
 }

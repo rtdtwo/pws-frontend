@@ -13,7 +13,7 @@ import {
 import {StatCard} from "@/components/StatCard";
 import {useEffect, useState} from "react";
 import {getStationWeather, StationWeatherResponse} from "@/data/network";
-import {getAverage, getMaxWithTimestamp, getMinWithTimestamp, roundToOneDecimalPlace} from "@/data/util";
+import {formatEpoch, getAverage, getMaxWithTimestamp, getMinWithTimestamp, roundToOneDecimalPlace} from "@/data/util";
 import LineChartCard from "@/components/LineChartCard";
 import {MeasurementType, UnitSystem} from "@/data/constants";
 import {useRouter, useSearchParams} from "next/navigation";
@@ -32,12 +32,7 @@ const Home = () => {
     const [stationWeather, setStationWeather] = useState<StationWeatherResponse | undefined>(undefined)
 
     const getFormattedDateTime = (epochSeconds: number | undefined) => {
-        if (epochSeconds) {
-            const date = new Date(epochSeconds * 1000);
-            return date.toLocaleString('en-US', {timeZone: 'America/New_York'});
-        }
-
-        return "Unknown";
+        return epochSeconds ? formatEpoch(epochSeconds) : "Unknown";
     }
 
     useEffect(() => {
