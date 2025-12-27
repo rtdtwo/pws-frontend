@@ -32,17 +32,15 @@ const Home = () => {
     const [stationWeather, setStationWeather] = useState<StationWeatherResponse | undefined>(undefined)
 
     const getFormattedDateTime = (epochSeconds: number | undefined) => {
-        return epochSeconds ? formatEpoch(epochSeconds) : "Unknown";
+        return epochSeconds ? formatEpoch(epochSeconds, 'full') : "Unknown";
     }
 
     useEffect(() => {
         getStationWeather().then(response => {
             if (response) {
                 setStationWeather(applyUnitConversion(response, unitSystem))
-                console.log(response)
             }
         }).catch(error => {
-            console.log(error);
             setStationWeather(undefined);
         });
     }, [unitSystem])
