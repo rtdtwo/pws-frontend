@@ -26,7 +26,7 @@ If you'd like to explore the codebase locally, follow these steps:
 **Clone the repository:**
 
 ```bash
-git clone https://github.com/your-username/weather-station-frontend.git
+git clone https://github.com/rtdtwo/pws-frontend.git
 ```
 
 **Install dependencies:**
