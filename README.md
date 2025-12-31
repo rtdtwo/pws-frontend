@@ -53,6 +53,6 @@ If you encounter a bug or have a suggestion on how to improve the UI/UX:
 - If not, please open a new issue with a clear description of the problem and steps to reproduce it.
 
 ## 👨‍💻 Author
-Rishabh * GitHub: @rtdtwo
+Rishabh Tatiraju
 
 Portfolio: [rishabh.blog](https://rishabh.blog)
