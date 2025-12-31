@@ -1,6 +1,8 @@
 # 🌤️ Rishabh's PWS Frontend
 A high-performance, real-time weather monitoring interface built with Next.js. Designed to visualize data from a my DIY personal weather station (PWS).
 
+<img width="100%" alt="image" src="https://github.com/user-attachments/assets/fb919316-4bff-4b64-9d2a-e249754e28fe" />
+
 ## 📖 About the Project
 This project serves as the dedicated frontend for my personal weather hardware. It was built to solve the need for a clean, ad-free, and hyper-local weather dashboard that provides more granular data than standard weather apps.
 The goal was to create a UI that is both aesthetically pleasing and technically robust, utilizing Next.js for speed and Mantine UI for a responsive, modern feel.
@@ -14,9 +16,9 @@ The goal was to create a UI that is both aesthetically pleasing and technically 
 
 **Language**: TypeScript
 
-**Styling**: Mantine UI
+**Styling**: [Mantine UI](https://mantine.dev/)
 
-**Icons**: Tabler Icons
+**Icons**: [Tabler Icons](https://tabler.io/icons)
 
 ## 🚀 Installation & Local Setup
 If you'd like to explore the codebase locally, follow these steps:
