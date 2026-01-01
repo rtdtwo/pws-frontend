@@ -1,4 +1,4 @@
-# 🌤️ Rishabh's PWS Frontend
+# 🌤️ Rishabh's PWS - Frontend
 A real-time weather monitoring interface built with Next.js. Designed to visualize data from my DIY personal weather station (PWS).
 
 Part of my full-stack DIY Personal Weather Station project:
