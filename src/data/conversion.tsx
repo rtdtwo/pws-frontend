@@ -46,8 +46,10 @@ export const applyUnitConversion = (response: StationWeatherResponse | undefined
         newResponse.data.current.temperature = roundToOneDecimalPlace(response.data.current.temperature);
         newResponse.data.current.dewpoint = roundToOneDecimalPlace(response.data.current.dewpoint);
         newResponse.data.current.pressure = roundToTwoDecimalPlaces(response.data.current.pressure);
-        newResponse.data.past_24h.temperature.forEach(item => item.value = roundToOneDecimalPlace(item.value));
-        newResponse.data.past_24h.pressure.forEach(item => item.value = roundToTwoDecimalPlaces(item.value));
+        newResponse.data.past_24h.forEach(item => {
+            item.temperature = roundToOneDecimalPlace(item.temperature)
+            item.pressure = roundToOneDecimalPlace(item.pressure)
+        });
         newResponse.data.annual_temperatures.forEach(item => {
             item.min = roundToOneDecimalPlace(item.min);
             item.max = roundToOneDecimalPlace(item.max);
@@ -56,8 +58,10 @@ export const applyUnitConversion = (response: StationWeatherResponse | undefined
         newResponse.data.current.temperature = convertCelsiusToFahrenheit(response.data.current.temperature);
         newResponse.data.current.dewpoint = convertCelsiusToFahrenheit(response.data.current.dewpoint);
         newResponse.data.current.pressure = convertMbarToInHg(response.data.current.pressure);
-        newResponse.data.past_24h.temperature.forEach(item => item.value = convertCelsiusToFahrenheit(item.value));
-        newResponse.data.past_24h.pressure.forEach(item => item.value = convertMbarToInHg(item.value));
+        newResponse.data.past_24h.forEach(item => {
+            item.temperature = convertCelsiusToFahrenheit(item.temperature)
+            item.pressure = convertMbarToInHg(item.pressure)
+        });
         newResponse.data.annual_temperatures.forEach(item => {
             item.min = convertCelsiusToFahrenheit(item.min);
             item.max = convertCelsiusToFahrenheit(item.max);

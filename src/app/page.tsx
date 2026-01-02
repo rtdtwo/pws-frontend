@@ -13,7 +13,14 @@ import {
 import {StatCard} from "@/components/StatCard";
 import {useEffect, useState} from "react";
 import {getStationWeather, StationWeatherResponse} from "@/data/network";
-import {formatEpoch, getAverage, getMaxWithTimestamp, getMinWithTimestamp, roundToOneDecimalPlace} from "@/data/util";
+import {
+    formatEpoch,
+    getAverage,
+    getMaxWithTimestamp,
+    getMinWithTimestamp,
+    mapWeatherDataToChartData,
+    roundToOneDecimalPlace
+} from "@/data/util";
 import LineChartCard from "@/components/LineChartCard";
 import {MeasurementType, UnitSystem} from "@/data/constants";
 import {useRouter, useSearchParams} from "next/navigation";
@@ -27,6 +34,7 @@ const Home = () => {
 
     const unitSystemParam = searchParams.get('u');
     const unitSystem = unitSystemParam === UnitSystem.METRIC ? UnitSystem.METRIC : UnitSystem.IMPERIAL;
+    const tempUnit = getUnit(MeasurementType.TEMPERATURE, unitSystem);
     const pressureUnit = getUnit(MeasurementType.PRESSURE, unitSystem);
 
     const [stationWeather, setStationWeather] = useState<StationWeatherResponse | undefined>(undefined)
@@ -41,6 +49,7 @@ const Home = () => {
                 setStationWeather(applyUnitConversion(response, unitSystem))
             }
         }).catch(error => {
+            console.log(error)
             setStationWeather(undefined);
         });
     }, [unitSystem])
@@ -76,7 +85,7 @@ const Home = () => {
                 <Grid mt="md">
                     <GridCol span={{base: 12, sm: 4}}>
                         <Group gap="md" align="flex-start">
-                            <IconTemperature size={48} color="#ff7979"/>
+                            <IconTemperature size={48} color="red"/>
                             <div>
                                 <Text size="sm" c="dimmed">Temperature</Text>
                                 <Text
@@ -90,7 +99,7 @@ const Home = () => {
                     </GridCol>
                     <GridCol span={{base: 12, sm: 4}}>
                         <Group gap="md" align="flex-start">
-                            <IconDroplet size={48} color="#22a6b3"/>
+                            <IconDroplet size={48} color="skyblue"/>
                             <div>
                                 <Text size="sm" c="dimmed">Humidity</Text>
                                 <Text
@@ -103,7 +112,7 @@ const Home = () => {
                     </GridCol>
                     <GridCol span={{base: 12, sm: 4}}>
                         <Group gap="md" align="flex-start">
-                            <IconGauge size={48} color="#badc58"/>
+                            <IconGauge size={48} color="teal"/>
                             <div>
                                 <Text size="sm" c="dimmed">Pressure</Text>
                                 <Text size="2rem">{stationWeather?.data?.current?.pressure}</Text>
@@ -119,41 +128,52 @@ const Home = () => {
             <Grid mt="lg">
                 <GridCol span={{base: 6, sm: 3}}>
                     <StatCard title="24h Max Temperature"
-                              value={`${suffixWithUnit(getMaxWithTimestamp(stationWeather?.data?.past_24h?.temperature)?.value, MeasurementType.TEMPERATURE, unitSystem)}`}
+                              value={
+                                  `${getMaxWithTimestamp(mapWeatherDataToChartData(
+                                      stationWeather?.data?.past_24h, MeasurementType.TEMPERATURE))?.value
+                                  }${tempUnit}`
+                              }
                               icon={<IconTemperaturePlus size={24}/>} color="#ff7979"/>
                 </GridCol>
                 <GridCol span={{base: 6, sm: 3}}>
                     <StatCard title="24h Min Temperature"
-                              value={`${suffixWithUnit(getMinWithTimestamp(stationWeather?.data?.past_24h?.temperature)?.value, MeasurementType.TEMPERATURE, unitSystem)}`}
+                              value={
+                                  `${getMinWithTimestamp(mapWeatherDataToChartData(
+                                      stationWeather?.data?.past_24h, MeasurementType.TEMPERATURE))?.value
+                                  }${tempUnit}`
+                              }
                               icon={<IconTemperatureMinus size={24}/>} color="lightblue"/>
                 </GridCol>
                 <GridCol span={{base: 6, sm: 3}}>
                     <StatCard title="24h Average Humidity"
-                              value={`${suffixWithUnit(roundToOneDecimalPlace(getAverage(stationWeather?.data?.past_24h?.humidity)!), MeasurementType.HUMIDITY, unitSystem)}`}
+                              value={
+                                  `${roundToOneDecimalPlace(
+                                      getAverage(mapWeatherDataToChartData(
+                                          stationWeather?.data?.past_24h, MeasurementType.HUMIDITY)
+                                      ))}%`
+                              }
                               icon={<IconDroplet size={24}/>} color="#22a6b3"/>
                 </GridCol>
                 <GridCol span={{base: 6, sm: 3}}>
                     <StatCard title="24h Average Pressure"
-                              value={`${getAverage(stationWeather?.data?.past_24h?.pressure)} ${pressureUnit}`}
+                              value={`${getAverage(mapWeatherDataToChartData(
+                                  stationWeather?.data?.past_24h, MeasurementType.PRESSURE))} ${pressureUnit}`}
                               icon={<IconGauge size={24}/>} color="#badc58"/>
                 </GridCol>
             </Grid>
 
-            <LineChartCard data={stationWeather?.data?.past_24h?.temperature}
+            <LineChartCard data={stationWeather?.data?.past_24h}
                            dataType={MeasurementType.TEMPERATURE}
-                           lineColor="red"
                            unitSystem={unitSystem}
                            chartTitle="Temperature Past 24 hours"/>
 
-            <LineChartCard data={stationWeather?.data?.past_24h?.humidity}
+            <LineChartCard data={stationWeather?.data?.past_24h}
                            dataType={MeasurementType.HUMIDITY}
-                           lineColor="cyan"
                            unitSystem={unitSystem}
                            chartTitle="Relative Humidity Past 24 Hours"/>
 
-            <LineChartCard data={stationWeather?.data?.past_24h?.pressure}
+            <LineChartCard data={stationWeather?.data?.past_24h}
                            dataType={MeasurementType.PRESSURE}
-                           lineColor="teal"
                            unitSystem={unitSystem}
                            chartTitle="Station Level Pressure Past 24 Hours"/>
 

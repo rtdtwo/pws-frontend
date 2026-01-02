@@ -6,5 +6,6 @@ export enum UnitSystem {
 export enum MeasurementType {
     TEMPERATURE,
     HUMIDITY,
-    PRESSURE
+    PRESSURE,
+    DEWPOINT
 }

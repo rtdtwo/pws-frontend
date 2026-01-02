@@ -1,19 +1,24 @@
 'use client'
 
-import {ChartReferenceLineProps, LineChart} from "@mantine/charts";
+import {ChartReferenceLineProps, LineChart, LineChartSeries} from "@mantine/charts";
 import {Card, Paper, Text} from "@mantine/core";
-import {PastWeatherData} from "@/data/network";
-import {formatEpoch, getMaxWithTimestamp, getMinWithTimestamp, roundToFive} from "@/data/util";
+import {WeatherData} from "@/data/network";
+import {
+    formatEpoch,
+    getMaxWithTimestamp,
+    getMinWithTimestamp,
+    mapWeatherDataToChartData,
+    roundToFive
+} from "@/data/util";
 import {MeasurementType, UnitSystem} from "@/data/constants";
 import {getUnit} from "@/data/conversion";
 
 type ChartCardProps = {
-    data: PastWeatherData[] | undefined,
+    data: WeatherData[] | undefined,
     dataType: MeasurementType,
-    lineColor: string,
     unitSystem: UnitSystem,
     chartTitle: string,
-    yAxisBounds?: number[]
+    yAxisBounds?: [number, number],
 }
 
 type ChartPayloadItem = {
@@ -28,31 +33,46 @@ interface ChartTooltipProps {
     dataType: MeasurementType;
 }
 
-const LineChartCard = ({data, dataType, lineColor, unitSystem, chartTitle, yAxisBounds}: ChartCardProps) => {
-    if (!yAxisBounds) {
+const LineChartCard = ({data, dataType, unitSystem, chartTitle, yAxisBounds}: ChartCardProps) => {
+
+    // Sort the data in ascending order
+    const sortedData = data?.sort((a, b) => a.timestamp - b.timestamp) || [];
+
+    const computeYAxisBounds = () => {
+        if (sortedData) {
+            switch (dataType) {
+                case MeasurementType.TEMPERATURE:
+                    const tMinValue = getMinWithTimestamp(mapWeatherDataToChartData(sortedData, MeasurementType.DEWPOINT)).value;
+                    const tMaxValue = getMaxWithTimestamp(mapWeatherDataToChartData(sortedData, MeasurementType.TEMPERATURE)).value;
+                    if (tMinValue == null || tMaxValue == null) return ['dataMin', 'dataMax'];
+                    return [roundToFive(tMinValue - 1, 'down'), roundToFive(tMaxValue + 1, 'up')];
+                case MeasurementType.PRESSURE:
+                    const pressureData = mapWeatherDataToChartData(sortedData, MeasurementType.PRESSURE);
+                    const pMinValue = getMinWithTimestamp(pressureData).value;
+                    const pMaxValue = getMaxWithTimestamp(pressureData).value;
+                    if (pMinValue == null || pMaxValue == null) return ['dataMin', 'dataMax'];
+                    if (unitSystem === UnitSystem.METRIC)
+                        return [roundToFive(pMinValue - 1, 'down'), roundToFive(pMaxValue + 1, 'up')];
+                    else
+                        return [pMaxValue - 0.1, pMaxValue + 0.1];
+                case MeasurementType.HUMIDITY:
+                    return [0, 100]
+                default:
+                    return ['dataMin', 'dataMax']
+            }
+        }
+    }
+
+    const getSeriesData = (): LineChartSeries[] => {
         switch (dataType) {
             case MeasurementType.TEMPERATURE:
-                const minTemp = getMinWithTimestamp(data)?.value || -89;
-                const maxTemp = getMaxWithTimestamp(data)?.value || 59;
-                // Pad the max and min values and round to the nearest 5 - this prevents data "kissing" the chart edges
-                yAxisBounds = [roundToFive(minTemp - 1, 'down'), roundToFive(maxTemp + 1, 'up')];
-                break;
-            case MeasurementType.HUMIDITY:
-                yAxisBounds = [0, 100];
-                break;
+                return [{name: 'temperature', color: 'Crimson'}, {name: 'dewpoint', color: 'LightPink'}]
             case MeasurementType.PRESSURE:
-                const minPressure = getMinWithTimestamp(data)?.value;
-                const maxPressure = getMaxWithTimestamp(data)?.value;
-                // Pad the max and min values and round to the nearest 5 similar to temperatures
-                if (unitSystem === UnitSystem.METRIC) {
-                    // Slightly higher padding for metric units
-                    yAxisBounds = [minPressure ? roundToFive(minPressure - 1, 'down') : 850,
-                        maxPressure ? roundToFive(maxPressure + 1, 'up') : 1100];
-                } else {
-                    yAxisBounds = [minPressure ? roundToFive(minPressure - 1, 'down') : 25,
-                        maxPressure ? roundToFive(maxPressure + 1, 'up') : 33];
-                }
+                return [{name: 'pressure', color: 'DarkCyan'}]
+            case MeasurementType.HUMIDITY:
+                return [{name: 'humidity', color: 'DodgerBlue'}]
         }
+        return [];
     }
 
     const unitStr = getUnit(dataType, unitSystem);
@@ -65,55 +85,54 @@ const LineChartCard = ({data, dataType, lineColor, unitSystem, chartTitle, yAxis
                 <Text fw={500} mb={5}>{label}</Text>
                 {payload.map((item: ChartPayloadItem) => (
                     <Text key={item.name} c={item.color} fz="sm">
-                        {`${item.value}${dataType === MeasurementType.PRESSURE ? ' ' : ''}${unitStr}`}
+                        {`${item.name}: ${item.value}${dataType === MeasurementType.PRESSURE ? ' ' : ''}${unitStr}`}
                     </Text>
                 ))}
             </Paper>
         );
     }
 
-    const getFormattedDataArray = () => {
-        if (!data) return [];
+    const generateReferenceLines = (): ChartReferenceLineProps[] => {
+        if (!sortedData || sortedData.length === 0) return [];
 
-        return data.sort((a, b) => a.timestamp - b.timestamp).map(item => {
-            return {
-                timestamp: item.timestamp,
-                value: item.value
-            }
-        })
-    };
+        const referenceLines: ChartReferenceLineProps[] = [];
 
-    const referenceDateLine = (): ChartReferenceLineProps[] => {
-        const formattedDataArray = getFormattedDataArray();
-        if (!formattedDataArray || formattedDataArray.length === 0) return [];
-
-        const latestTimestamp = formattedDataArray[formattedDataArray.length - 1].timestamp;
+        // Start of Current Day
+        const latestTimestamp = sortedData[sortedData.length - 1].timestamp;
         const latestTimestampDate = new Date(latestTimestamp * 1000);
         latestTimestampDate.setHours(0, 0, 0, 0);
         const startOfDayTimestamp = Math.floor(latestTimestampDate.getTime() / 1000);
 
-        return [
-            {
-                x: startOfDayTimestamp,
-                label: formatEpoch(startOfDayTimestamp, 'dayMonth'),
-                color: 'gray',
-                labelPosition: 'insideTopLeft'
-            },
-        ]
+        referenceLines.push({
+            x: startOfDayTimestamp,
+            label: formatEpoch(startOfDayTimestamp, 'dayMonth'),
+            color: 'LightGray',
+            labelPosition: 'insideTopLeft',
+            strokeDasharray: "5 5"
+        })
+
+        // Freezing Temperature
+        if (dataType === MeasurementType.TEMPERATURE) {
+            referenceLines.push({
+                y: unitSystem === UnitSystem.METRIC ? 0 : 32,
+                color: 'LightSkyBlue',
+                strokeDasharray: "5 5"
+            })
+        }
+
+        return referenceLines;
     }
 
     return (
         <Card mt="md" radius="md" shadow="sm">
             <Text size="md" mb="sm">{chartTitle} ({unitStr})</Text>
             <LineChart
-                data={getFormattedDataArray()}
+                data={sortedData}
                 w="100%"
                 h={200}
                 dotProps={{r: 0}}
                 dataKey="timestamp"
-                series={[
-                    {name: "value", color: lineColor},
-                ]}
+                series={getSeriesData()}
                 tooltipProps={{
                     content: ({label, payload}) => (
                         <ChartTooltip
@@ -122,8 +141,8 @@ const LineChartCard = ({data, dataType, lineColor, unitSystem, chartTitle, yAxis
                             dataType={dataType}/>
                     ),
                 }}
-                referenceLines={referenceDateLine()}
-                yAxisProps={{domain: yAxisBounds}}
+                referenceLines={generateReferenceLines()}
+                yAxisProps={{domain: yAxisBounds ? yAxisBounds : computeYAxisBounds()}}
                 xAxisProps={{
                     type: 'number',
                     domain: ['dataMin', 'dataMax'],
