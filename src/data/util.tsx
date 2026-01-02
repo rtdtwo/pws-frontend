@@ -1,6 +1,5 @@
-import {ChartDataItem} from "@/data/types";
+import {ChartDataItem, WeatherData} from "@/data/types";
 import {MeasurementType} from "@/data/constants";
-import {WeatherData} from "@/data/network";
 
 export const roundToOneDecimalPlace = (num: number) => {
     return Math.round(num * 10) / 10;

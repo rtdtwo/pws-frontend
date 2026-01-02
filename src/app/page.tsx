@@ -12,7 +12,7 @@ import {
 } from '@tabler/icons-react';
 import {StatCard} from "@/components/StatCard";
 import {useEffect, useState} from "react";
-import {getStationWeather, StationWeatherResponse} from "@/data/network";
+import {getStationWeather} from "@/data/network";
 import {
     formatEpoch,
     getAverage,
@@ -26,6 +26,7 @@ import {MeasurementType, UnitSystem} from "@/data/constants";
 import {useRouter, useSearchParams} from "next/navigation";
 import {applyUnitConversion, getUnit, suffixWithUnit} from "@/data/conversion";
 import AnnualStatsTable from "@/components/AnnualStatsTable";
+import {StationWeatherResponse} from "@/data/types";
 
 
 const Home = () => {

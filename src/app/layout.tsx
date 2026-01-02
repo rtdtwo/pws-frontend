@@ -27,6 +27,9 @@ const theme = createTheme({
 export default function RootLayout({children,}: Readonly<{ children: React.ReactNode; }>) {
     return (
         <html lang="en">
+        <head>
+            <title>{metadata.title?.toString()}</title>
+        </head>
         <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <MantineProvider theme={theme}>
             <Suspense fallback={null}>

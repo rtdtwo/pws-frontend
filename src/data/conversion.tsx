@@ -1,6 +1,6 @@
 import {MeasurementType, UnitSystem} from "@/data/constants";
-import {StationWeatherResponse} from "@/data/network";
 import {roundToOneDecimalPlace, roundToTwoDecimalPlaces} from "@/data/util";
+import {StationWeatherResponse} from "@/data/types";
 
 
 const convertCelsiusToFahrenheit = (temperature: number) => {

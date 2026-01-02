@@ -1,8 +1,8 @@
 import {Card, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Title} from "@mantine/core";
-import {AnnualWeatherData} from "@/data/network";
 import {formatMonthNumberToMonthName} from "@/data/util";
 import {getUnit} from "@/data/conversion";
 import {MeasurementType, UnitSystem} from "@/data/constants";
+import {AnnualWeatherData} from "@/data/types";
 
 type AnnualStatsTableProps = {
     data: AnnualWeatherData[] | undefined,

@@ -2,7 +2,6 @@
 
 import {ChartReferenceLineProps, LineChart, LineChartSeries} from "@mantine/charts";
 import {Card, Paper, Text} from "@mantine/core";
-import {WeatherData} from "@/data/network";
 import {
     formatEpoch,
     getMaxWithTimestamp,
@@ -12,6 +11,7 @@ import {
 } from "@/data/util";
 import {MeasurementType, UnitSystem} from "@/data/constants";
 import {getUnit} from "@/data/conversion";
+import {WeatherData} from "@/data/types";
 
 type ChartCardProps = {
     data: WeatherData[] | undefined,
