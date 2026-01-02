@@ -12,6 +12,7 @@ import {
 import {MeasurementType, UnitSystem} from "@/data/constants";
 import {getUnit} from "@/data/conversion";
 import {WeatherData} from "@/data/types";
+import {getColorForMeasurementType} from "@/data/colors";
 
 type ChartCardProps = {
     data: WeatherData[] | undefined,
@@ -66,11 +67,12 @@ const LineChartCard = ({data, dataType, unitSystem, chartTitle, yAxisBounds}: Ch
     const getSeriesData = (): LineChartSeries[] => {
         switch (dataType) {
             case MeasurementType.TEMPERATURE:
-                return [{name: 'temperature', color: 'Crimson'}, {name: 'dewpoint', color: 'LightPink'}]
+                return [{name: 'temperature', color: getColorForMeasurementType(MeasurementType.TEMPERATURE)},
+                    {name: 'dewpoint', color: getColorForMeasurementType(MeasurementType.DEWPOINT)}]
             case MeasurementType.PRESSURE:
-                return [{name: 'pressure', color: 'DarkCyan'}]
+                return [{name: 'pressure', color: getColorForMeasurementType(MeasurementType.PRESSURE)}]
             case MeasurementType.HUMIDITY:
-                return [{name: 'humidity', color: 'DodgerBlue'}]
+                return [{name: 'humidity', color: getColorForMeasurementType(MeasurementType.HUMIDITY)}]
         }
         return [];
     }

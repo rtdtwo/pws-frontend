@@ -27,6 +27,7 @@ import {useRouter, useSearchParams} from "next/navigation";
 import {applyUnitConversion, getUnit, suffixWithUnit} from "@/data/conversion";
 import AnnualStatsTable from "@/components/AnnualStatsTable";
 import {StationWeatherResponse} from "@/data/types";
+import {getColorForMeasurementType} from "@/data/colors";
 
 
 const Home = () => {
@@ -86,7 +87,7 @@ const Home = () => {
                 <Grid mt="md">
                     <GridCol span={{base: 12, sm: 4}}>
                         <Group gap="md" align="flex-start">
-                            <IconTemperature size={48} color="red"/>
+                            <IconTemperature size={48} color={getColorForMeasurementType(MeasurementType.TEMPERATURE)}/>
                             <div>
                                 <Text size="sm" c="dimmed">Temperature</Text>
                                 <Text
@@ -100,7 +101,7 @@ const Home = () => {
                     </GridCol>
                     <GridCol span={{base: 12, sm: 4}}>
                         <Group gap="md" align="flex-start">
-                            <IconDroplet size={48} color="skyblue"/>
+                            <IconDroplet size={48} color={getColorForMeasurementType(MeasurementType.HUMIDITY)}/>
                             <div>
                                 <Text size="sm" c="dimmed">Humidity</Text>
                                 <Text
@@ -113,7 +114,7 @@ const Home = () => {
                     </GridCol>
                     <GridCol span={{base: 12, sm: 4}}>
                         <Group gap="md" align="flex-start">
-                            <IconGauge size={48} color="teal"/>
+                            <IconGauge size={48} color={getColorForMeasurementType(MeasurementType.PRESSURE)}/>
                             <div>
                                 <Text size="sm" c="dimmed">Pressure</Text>
                                 <Text size="2rem">{stationWeather?.data?.current?.pressure}</Text>
