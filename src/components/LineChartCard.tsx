@@ -36,7 +36,7 @@ interface ChartTooltipProps {
 const LineChartCard = ({data, dataType, unitSystem, chartTitle, yAxisBounds}: ChartCardProps) => {
 
     // Sort the data in ascending order
-    const sortedData = data?.sort((a, b) => a.timestamp - b.timestamp) || [];
+    const sortedData = data ? [...data].sort((a, b) => a.timestamp - b.timestamp) : [];
 
     const computeYAxisBounds = () => {
         if (sortedData) {
