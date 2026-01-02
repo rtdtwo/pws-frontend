@@ -55,7 +55,7 @@ const LineChartCard = ({data, dataType, unitSystem, chartTitle, yAxisBounds}: Ch
                     if (unitSystem === UnitSystem.METRIC)
                         return [roundToFive(pMinValue - 1, 'down'), roundToFive(pMaxValue + 1, 'up')];
                     else
-                        return [pMaxValue - 0.1, pMaxValue + 0.1];
+                        return [pMinValue - 0.1, pMaxValue + 0.1];
                 case MeasurementType.HUMIDITY:
                     return [0, 100]
                 default:
