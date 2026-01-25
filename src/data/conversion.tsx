@@ -52,8 +52,9 @@ export const applyUnitConversion = (response: StationWeatherResponse | undefined
             item.dewpoint = roundToOneDecimalPlace(item.dewpoint)
         });
         newResponse.data.annual_temperatures.forEach(item => {
-            item.min = roundToOneDecimalPlace(item.min);
-            item.max = roundToOneDecimalPlace(item.max);
+            item.temperature.min = roundToOneDecimalPlace(item.temperature.min);
+            item.temperature.max = roundToOneDecimalPlace(item.temperature.max);
+            item.temperature.avg = roundToOneDecimalPlace(item.temperature.avg);
         });
     } else {
         newResponse.data.current.temperature = convertCelsiusToFahrenheit(response.data.current.temperature);
@@ -65,8 +66,9 @@ export const applyUnitConversion = (response: StationWeatherResponse | undefined
             item.dewpoint = convertCelsiusToFahrenheit(item.dewpoint)
         });
         newResponse.data.annual_temperatures.forEach(item => {
-            item.min = convertCelsiusToFahrenheit(item.min);
-            item.max = convertCelsiusToFahrenheit(item.max);
+            item.temperature.min = convertCelsiusToFahrenheit(item.temperature.min);
+            item.temperature.max = convertCelsiusToFahrenheit(item.temperature.max);
+            item.temperature.avg = convertCelsiusToFahrenheit(item.temperature.avg);
         });
     }
 
@@ -79,4 +81,8 @@ export const suffixWithUnit = (value: number | string | undefined | null, measur
     } else {
         return "--";
     }
+}
+
+export const convertTemperature = (temperature: number, targetUnitSystem: UnitSystem) => {
+    return targetUnitSystem === UnitSystem.METRIC ? temperature : convertCelsiusToFahrenheit(temperature);
 }

@@ -12,9 +12,14 @@ export type WeatherData = {
 }
 
 export type AnnualWeatherData = {
-    month_index: number,
-    max: number,
-    min: number,
+    monthIndex: number,
+    temperature: {
+        max: number,
+        maxTimestamp: number,
+        min: number,
+        minTimestamp: number,
+        avg: number
+    }
 }
 
 export type StationWeatherResponse = {

@@ -178,8 +178,13 @@ export const formatEpoch = (
     return formatter.format(date);
 };
 
-export const formatMonthNumberToMonthName = (monthNumber: number) => {
-    return new Date(Date.UTC(2025, monthNumber, 1)).toLocaleString('default', {month: 'long'});
+/**
+ * Converts a month index (0-11) to a month name (January - December)
+ * @param monthIndex
+ */
+export const formatMonthIndexToMonthName = (monthIndex: number) => {
+    // Year 2025 is arbitrary - we don't really care about the exact date, just the month name
+    return new Date(Date.UTC(2025, monthIndex + 1, 1)).toLocaleString('default', {month: 'long'});
 }
 
 /**

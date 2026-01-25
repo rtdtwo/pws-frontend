@@ -181,7 +181,7 @@ const Home = () => {
 
             <AnnualStatsTable data={stationWeather?.data?.annual_temperatures}
                               unitSystem={unitSystem}
-                              title={"Annual Temperatures"}/>
+                              title={"Annual Temperature Stats"}/>
 
         </Container>
     );
