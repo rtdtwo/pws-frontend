@@ -49,6 +49,7 @@ export const applyUnitConversion = (response: StationWeatherResponse | undefined
         newResponse.data.past_24h.forEach(item => {
             item.temperature = roundToOneDecimalPlace(item.temperature)
             item.pressure = roundToOneDecimalPlace(item.pressure)
+            item.dewpoint = roundToOneDecimalPlace(item.dewpoint)
         });
         newResponse.data.annual_temperatures.forEach(item => {
             item.min = roundToOneDecimalPlace(item.min);
@@ -61,6 +62,7 @@ export const applyUnitConversion = (response: StationWeatherResponse | undefined
         newResponse.data.past_24h.forEach(item => {
             item.temperature = convertCelsiusToFahrenheit(item.temperature)
             item.pressure = convertMbarToInHg(item.pressure)
+            item.dewpoint = convertCelsiusToFahrenheit(item.dewpoint)
         });
         newResponse.data.annual_temperatures.forEach(item => {
             item.min = convertCelsiusToFahrenheit(item.min);
